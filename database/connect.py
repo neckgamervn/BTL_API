@@ -1,7 +1,7 @@
 import pandas as pd
 import pyodbc
 
-conn = pyodbc.connect('Driver={SQL Server};'
+conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                       'Server=157.230.40.120;'
                       'Database=master;'
                       'UID=sa;'
