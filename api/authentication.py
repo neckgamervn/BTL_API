@@ -1,6 +1,6 @@
 from database.connect import execute_query, read_sql_query
 from database.models import LoginBody, RegisterBody
-from utils import new_token, sha256, on_success, on_fail
+from utils import new_token, sha256, on_success, on_fail, check_existed_token
 
 
 def login(body: LoginBody):
@@ -43,22 +43,12 @@ def register(body: RegisterBody):
 
 def logout(token):
     try:
-        existed_user = check_existed_token(token)['data']['username']
-        # if existed_user != None:
-
+        _, username = check_existed_token(token)
         execute_query("update [user] SET token = NULL where token ='{}'".format(token))
         data = {
-            'username': existed_user
+            'username': username
         }
         return on_success(data)
     except Exception as err:
         print(err)
         return on_fail()
-def check_existed_token(token):
-    existed_user = read_sql_query("select username, token from [user] where token='{}'".format(token))
-    if len(existed_user.values) > 0:
-        data = {
-            'username': existed_user.values[-1][0]
-        }
-        return on_success(data)
-    return None

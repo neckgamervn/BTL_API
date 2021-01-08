@@ -2,7 +2,8 @@ from fastapi import FastAPI, Header
 from typing import Optional
 from api.authentication import login, register, logout, check_existed_token
 from database.models import LoginBody, RegisterBody
-from admin.listPost import get_list_category
+from api.admin import get_list_category
+from utils import on_fail
 
 app = FastAPI()
 
@@ -21,6 +22,7 @@ def _register(body: RegisterBody):
 def _logout(token: Optional[str] = Header(None)):
     return logout(token)
 
-@app.post("/get_list_category")
+
+@app.get("/get_list_category")
 def _get_list_category(token: Optional[str] = Header(None)):
-    return get_list_category(token)
+    return get_list_category() if check_existed_token(token) is not None else on_fail()
