@@ -74,11 +74,17 @@ def get_list_category():
         return on_fail()
 
 
-def get_list_post(id_category, keyword):
+def get_list_post(id_category, keyword, page):
     try:
         list_output = []
-        list_post = read_sql_query("select * from post where id_category = '{}'".format(id_category)).values
+        if id_category == '0':
+            list_post = read_sql_query("select * from post").values
+        else:
+            list_post = read_sql_query("select * from post where id_category = '{}'".format(id_category)).values
+        count = 0
         for post in list_post:
+            if count >= int(page)*10:
+                break
             if keyword.lower() in un_unicode(post[2]).lower():
                 data = {
                     'id': post[0],
@@ -89,7 +95,9 @@ def get_list_post(id_category, keyword):
                     'id_category': post[5]
                 }
                 list_output.append(data)
-        return on_success(list_output)
+                count = count + 1
+
+        return on_success(list_output[-10:])
     except Exception as err:
         print("List post error: ", err)
         return on_fail()

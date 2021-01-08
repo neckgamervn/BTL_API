@@ -64,5 +64,5 @@ def _image(url):
 
 
 @app.get("/get_list_post")
-def _get_list_post(token: Optional[str] = Header(None), id_category='0', keyword=''):
-    return get_list_post(id_category, keyword) if check_existed_token(token) is not None else on_fail()
+def _get_list_post(token: Optional[str] = Header(None), id_category='0', keyword='', page='1'):
+    return get_list_post(id_category, keyword, page) if check_existed_token(token) is not None else on_fail()
