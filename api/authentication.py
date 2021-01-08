@@ -42,11 +42,23 @@ def register(body: RegisterBody):
 
 
 def logout(token):
-    check_existed_token = read_sql_query("select username,token from [user] where token='{}'".format(token))
-    if len(check_existed_token.values) > 0:
+    try:
+        existed_user = check_existed_token(token)['data']['username']
+        # if existed_user != None:
+
         execute_query("update [user] SET token = NULL where token ='{}'".format(token))
         data = {
-            'username': check_existed_token.values[-1][0]
+            'username': existed_user
         }
         return on_success(data)
-    return on_fail()
+    except Exception as err:
+        print(err)
+        return on_fail()
+def check_existed_token(token):
+    existed_user = read_sql_query("select username, token from [user] where token='{}'".format(token))
+    if len(existed_user.values) > 0:
+        data = {
+            'username': existed_user.values[-1][0]
+        }
+        return on_success(data)
+    return None
