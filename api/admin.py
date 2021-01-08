@@ -1,8 +1,7 @@
 from api.authentication import check_existed_token
 from database.connect import read_sql_query
-from utils import on_success, on_fail
+from utils import on_success, on_fail, un_unicode
 import unicodedata
-import re
 
 
 def create_post(token):
@@ -46,21 +45,3 @@ def get_list_post(id_category, keyword):
         return on_fail()
 
 
-def un_unicode(text):
-
-    patterns = {
-        '[àáảãạăắằẵặẳâầấậẫẩ]': 'a',
-        '[đ]': 'd',
-        '[èéẻẽẹêềếểễệ]': 'e',
-        '[ìíỉĩị]': 'i',
-        '[òóỏõọôồốổỗộơờớởỡợ]': 'o',
-        '[ùúủũụưừứửữự]': 'u',
-        '[ỳýỷỹỵ]': 'y'
-    }
-
-    output = text
-    for regex, replace in patterns.items():
-        output = re.sub(regex, replace, output)
-        # deal with upper case
-        output = re.sub(regex.upper(), replace.upper(), output)
-    return output

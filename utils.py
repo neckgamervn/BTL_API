@@ -1,6 +1,7 @@
 from hashlib import sha256 as sh
 from time import time
 from database.connect import read_sql_query
+import re
 
 
 def sha256(text):
@@ -35,3 +36,20 @@ def check_existed_token(token):
         username = existed_user.values[-1][1],
         return id_user, username
     return None
+
+def un_unicode(text):
+    patterns = {
+        '[àáảãạăắằẵặẳâầấậẫẩ]': 'a',
+        '[đ]': 'd',
+        '[èéẻẽẹêềếểễệ]': 'e',
+        '[ìíỉĩị]': 'i',
+        '[òóỏõọôồốổỗộơờớởỡợ]': 'o',
+        '[ùúủũụưừứửữự]': 'u',
+        '[ỳýỷỹỵ]': 'y'
+    }
+    output = text
+    for regex, replace in patterns.items():
+        output = re.sub(regex, replace, output)
+        # deal with upper case
+        output = re.sub(regex.upper(), replace.upper(), output)
+    return output
