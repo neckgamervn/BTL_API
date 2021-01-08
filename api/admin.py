@@ -1,8 +1,10 @@
-from database.connect import read_sql_query, execute_query
-from utils import on_success, on_fail
 import shutil
 from time import time
+
 from constant import BASE_URL
+from database.connect import execute_query
+from database.connect import read_sql_query
+from utils import on_success, on_fail, un_unicode
 
 
 def create_post(title, description, url, category_id, image):
@@ -69,4 +71,25 @@ def get_list_category():
         return on_success(list_output)
     except Exception as err:
         print(err)
+        return on_fail()
+
+
+def get_list_post(id_category, keyword):
+    try:
+        list_output = []
+        list_post = read_sql_query("select * from post where id_category = '{}'".format(id_category)).values
+        for post in list_post:
+            if keyword.lower() in un_unicode(post[2]).lower():
+                data = {
+                    'id': post[0],
+                    'title': post[1],
+                    'description': post[2],
+                    'url_linked': post[3],
+                    'img_url': post[4],
+                    'id_category': post[5]
+                }
+                list_output.append(data)
+        return on_success(list_output)
+    except Exception as err:
+        print("List post error: ", err)
         return on_fail()

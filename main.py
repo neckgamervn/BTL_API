@@ -1,10 +1,13 @@
-from fastapi import FastAPI, Header, Form, File, UploadFile
 from typing import Optional
+
+from fastapi import FastAPI, Header, Form, File, UploadFile
+from fastapi.responses import FileResponse
+
+from api.admin import create_post, edit_post
+from api.admin import get_list_category, get_list_post
 from api.authentication import login, register, logout, check_existed_token
 from database.models import LoginBody, RegisterBody
-from api.admin import get_list_category, create_post, edit_post
 from utils import on_fail
-from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -58,3 +61,8 @@ def _edit_post(token: Optional[str] = Header(None),
 def _image(url):
     print(url)
     return FileResponse("./image_upload/" + url)
+
+
+@app.get("/get_list_post")
+def _get_list_post(token: Optional[str] = Header(None), id_category='0', keyword=''):
+    return get_list_post(id_category, keyword) if check_existed_token(token) is not None else on_fail()
